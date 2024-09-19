@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { eulerMethod } from "@/utils/euler";
 import { Line } from "react-chartjs-2";
+import Image from "next/image";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -110,7 +111,7 @@ const Home: React.FC = () => {
         Explorateurs 2D : Vaisseau en mouvement
       </h1>
       <p className="text-lg text-gray-700 mb-8 text-center">
-        Utilisez la méthode d'Euler pour calculer la trajectoire d'un vaisseau.
+        Utilisez la méthode d&apos;Euler pour calculer la trajectoire d&apos;un vaisseau.
       </p>
 
       {/* Formulaire */}
@@ -178,10 +179,12 @@ const Home: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4">Simulation :</h2>
           <div className="canvas-container relative h-96 w-full border border-gray-300 bg-gray-100 flex items-center justify-center overflow-hidden">
             {/* Image du vaisseau */}
-            <img
+            <Image
               src="/img/vaisseau.png"
               alt="Vaisseau"
               className="vaisseau absolute transition-transform duration-100"
+              width={40}
+              height={40}
               style={{
                 top: `${shipPosition}px`,
                 left: '50%',
