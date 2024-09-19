@@ -30,17 +30,22 @@ interface EulerResult {
 }
 
 const Home: React.FC = () => {
-  const [y0, setY0] = useState<number>(100);
+  const containerHeight = 500; // Hauteur du conteneur de la simulation
+  const shipHeight = 40; // Hauteur du vaisseau
+  const initialPosition = containerHeight - shipHeight; // Position initiale en bas du conteneur
+  const upperLimit = 20; // Limite supérieure pour stopper le vaisseau avant le bord
+
+  const [y0, setY0] = useState<number>(initialPosition);
   const [t0, setT0] = useState<number>(0);
   const [tEnd, setTEnd] = useState<number>(10);
   const [step, setStep] = useState<number>(0.1);
   const [speed, setSpeed] = useState<number>(50);
   const [result, setResult] = useState<EulerResult[]>([]);
   const [showGraph, setShowGraph] = useState<boolean>(false);
-  const [shipPosition, setShipPosition] = useState<number>(y0);
+  const [shipPosition, setShipPosition] = useState<number>(initialPosition);
 
   const handleCalculate = () => {
-    const f = (t: number, y: number): number => -speed;
+    const f = (t: number, y: number): number => -speed; // Le vaisseau monte
     const eulerResult = eulerMethod(f, y0, t0, tEnd, step);
     setResult(eulerResult);
     setShowGraph(true);
@@ -50,7 +55,9 @@ const Home: React.FC = () => {
     if (result.length > 0) {
       result.forEach((item, index) => {
         setTimeout(() => {
-          setShipPosition(item.y);
+          // Limite la position du vaisseau pour qu'il ne dépasse pas le upperLimit
+          const newPosition = Math.max(upperLimit, item.y);
+          setShipPosition(newPosition);
         }, index * 100);
       });
     }
@@ -61,7 +68,7 @@ const Home: React.FC = () => {
     datasets: [
       {
         label: "Position du vaisseau (y)",
-        data: result.map((item) => item.y.toFixed(2)),
+        data: result.map((item) => (containerHeight - item.y).toFixed(2)),
         borderColor: "rgba(75, 192, 192, 1)",
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         fill: true,
@@ -105,7 +112,7 @@ const Home: React.FC = () => {
       <p className="text-lg text-gray-700 mb-8 text-center">
         Utilisez la méthode d'Euler pour calculer la trajectoire d'un vaisseau.
       </p>
-      
+
       {/* Formulaire */}
       <div className="form-container bg-white p-6 rounded-lg shadow-lg w-full max-w-md mb-8">
         <div className="space-y-4 mb-8">
@@ -188,7 +195,7 @@ const Home: React.FC = () => {
 
         {/* Graphique */}
         {showGraph && (
-          <div className="graph-container w-full max-w-2xl mx-auto mt-8">
+          <div className="graph-container w-full max-w-3xl mx-auto mt-8"> {/* Largeur max augmentée */}
             <h2 className="text-2xl font-semibold mb-4">Graphique de la position du vaisseau</h2>
             <div>
               <Line data={chartData} options={chartOptions} />

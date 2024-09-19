@@ -37,7 +37,7 @@ button:hover {
 .canvas-container {
   position: relative;
   width: 100%;
-  height: 500px; /* Augmentation de la hauteur */
+  height: 500px; /* Hauteur de la simulation */
   border: 1px solid #ddd;
   background-color: #f9f9f9;
   display: flex;
@@ -57,11 +57,13 @@ button:hover {
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Largeur égale à la simulation */
+  max-width: 800px; /* Largeur augmentée */
 }
 
 .results-container {
   display: flex;
-  flex-wrap: wrap; /* Permet d'empiler les éléments sur petit écran */
+  flex-wrap: wrap; /* Empile les éléments sur petit écran */
   justify-content: center;
   align-items: flex-start;
   gap: 20px; /* Espace entre les cartes */
@@ -76,7 +78,8 @@ button:hover {
   padding: 20px;
   background-color: #fff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  flex: 1 1 500px; /* Largeur minimale de 500px et occupe l'espace disponible */
+  width: 100%; /* Largeur égale au graphique */
+  max-width: 500px;
 }
 
 @media (max-width: 768px) {
