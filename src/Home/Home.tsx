@@ -1,6 +1,6 @@
-'use client'
+'use client';
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { eulerMethod } from "@/utils/euler";
 import { Line } from "react-chartjs-2";
 import {
@@ -37,8 +37,7 @@ const Home: React.FC = () => {
   const [speed, setSpeed] = useState<number>(50);
   const [result, setResult] = useState<EulerResult[]>([]);
   const [showGraph, setShowGraph] = useState<boolean>(false);
-
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [shipPosition, setShipPosition] = useState<number>(y0);
 
   const handleCalculate = () => {
     const f = (t: number, y: number): number => -speed;
@@ -48,20 +47,10 @@ const Home: React.FC = () => {
   };
 
   useEffect(() => {
-    if (result.length > 0 && canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "black";
-
+    if (result.length > 0) {
       result.forEach((item, index) => {
         setTimeout(() => {
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          ctx.beginPath();
-          ctx.arc(150, item.y, 20, 0, 2 * Math.PI);
-          ctx.fill();
+          setShipPosition(item.y);
         }, index * 100);
       });
     }
@@ -109,78 +98,104 @@ const Home: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-8">
+      <h1 className="text-4xl font-bold mb-8 text-blue-600">
         Explorateurs 2D : Vaisseau en mouvement
       </h1>
-      <p>
+      <p className="text-lg text-gray-700 mb-8 text-center">
         Utilisez la méthode d'Euler pour calculer la trajectoire d'un vaisseau.
       </p>
-
-      <div>
-        <div>
-          <label>Position initiale (y0 en pixels):</label>
-          <input
-            type="number"
-            value={y0}
-            onChange={(e) => setY0(parseFloat(e.target.value))}
-        />
-        </div>
-        <div>
-          <label>Vitesse (pixels/s):</label>
-          <input
-            type="number"
-            value={speed}
-            onChange={(e) => setSpeed(parseFloat(e.target.value))}
-          />
-        </div>
-        <div>
-          <label>Temps initial (t0):</label>
-          <input
-            type="number"
-            value={t0}
-            onChange={(e) => setT0(parseFloat(e.target.value))}
-          />
-        </div>
-        <div>
-          <label>Temps final (tEnd):</label>
-          <input
-            type="number"
-            value={tEnd}
-            onChange={(e) => setTEnd(parseFloat(e.target.value))}
-          />
-        </div>
-        <div>
-          <label>Pas de calcul (step):</label>
-          <input
-            type="number"
-            value={step}
-            onChange={(e) => setStep(parseFloat(e.target.value))}
-          />
-        </div>
-      </div>
-
-      <button
-        onClick={handleCalculate}
-      >
-        Lancer la simulation
-      </button>
-
-      <h2>Résultats :</h2>
-      <canvas
-        ref={canvasRef}
-        width={300}
-        height={300}
-      ></canvas>
-
-      {showGraph && (
-        <div>
-          <h2>Graphique de la position du vaisseau</h2>
-          <div>
-            <Line data={chartData} options={chartOptions} />
+      
+      {/* Formulaire */}
+      <div className="form-container bg-white p-6 rounded-lg shadow-lg w-full max-w-md mb-8">
+        <div className="space-y-4 mb-8">
+          <div className="flex items-center space-x-4">
+            <label className="text-gray-600">Position initiale (y0 en pixels):</label>
+            <input
+              type="number"
+              value={y0}
+              onChange={(e) => setY0(parseFloat(e.target.value))}
+              className="p-2 border rounded-md"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="text-gray-600">Vitesse (pixels/s):</label>
+            <input
+              type="number"
+              value={speed}
+              onChange={(e) => setSpeed(parseFloat(e.target.value))}
+              className="p-2 border rounded-md"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="text-gray-600">Temps initial (t0):</label>
+            <input
+              type="number"
+              value={t0}
+              onChange={(e) => setT0(parseFloat(e.target.value))}
+              className="p-2 border rounded-md"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="text-gray-600">Temps final (tEnd):</label>
+            <input
+              type="number"
+              value={tEnd}
+              onChange={(e) => setTEnd(parseFloat(e.target.value))}
+              className="p-2 border rounded-md"
+            />
+          </div>
+          <div className="flex items-center space-x-4">
+            <label className="text-gray-600">Pas de calcul (step):</label>
+            <input
+              type="number"
+              value={step}
+              onChange={(e) => setStep(parseFloat(e.target.value))}
+              className="p-2 border rounded-md"
+            />
           </div>
         </div>
-      )}
+
+        <button
+          onClick={handleCalculate}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+        >
+          Lancer la simulation
+        </button>
+      </div>
+
+      {/* Résultats de la simulation */}
+      <div className="results-container">
+        {/* Conteneur de simulation */}
+        <div className="simulation-container bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <h2 className="text-2xl font-semibold mb-4">Simulation :</h2>
+          <div className="canvas-container relative h-96 w-full border border-gray-300 bg-gray-100 flex items-center justify-center overflow-hidden">
+            {/* Image du vaisseau */}
+            <img
+              src="/img/vaisseau.png"
+              alt="Vaisseau"
+              className="vaisseau absolute transition-transform duration-100"
+              style={{
+                top: `${shipPosition}px`,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                width: '40px',
+                height: '40px',
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Graphique */}
+        {showGraph && (
+          <div className="graph-container w-full max-w-2xl mx-auto mt-8">
+            <h2 className="text-2xl font-semibold mb-4">Graphique de la position du vaisseau</h2>
+            <div>
+              <Line data={chartData} options={chartOptions} />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
